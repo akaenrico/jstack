@@ -1,0 +1,45 @@
+version: '3.9'
+
+volumes:
+  pg-data:
+
+services:
+  base: &base
+    image: node:18.16.0
+    working_dir: /home/node/app
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+
+  fe:
+    <<: *base
+    hostname: mc-fe
+    command: bash -c "yarn && yarn start"
+    ports:
+      - 3000:3000
+    volumes:
+      - ./fe:/home/node/app
+
+  api:
+    <<: *base
+    hostname: mc-api
+    command: bash -c "yarn && yarn dev"
+    environment:
+      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/mycontacts?schema=mycontacts"
+      EXPRESS_PORT: 3001
+    ports:
+      - 3001:3001
+    depends_on:
+      - database
+    volumes:
+      - ./api:/home/node/app
+
+  database:
+    image: postgres:15.3
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: mycontacts
+    ports:
+      - 5432:5432
