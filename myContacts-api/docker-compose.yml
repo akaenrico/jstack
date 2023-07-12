@@ -1,5 +1,8 @@
 version: '3.9'
 
+volumes:
+  db-data:
+
 services:
   base: &base
     image: node:18.16.0-alpine
@@ -19,3 +22,13 @@ services:
       - ${API_PORT}:${API_PORT}
     volumes:
       - .:/home/node/app
+
+  db:
+    image: postgres:15.3
+    hostname: mc-db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
