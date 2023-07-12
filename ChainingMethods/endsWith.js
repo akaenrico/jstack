@@ -1,4 +1,4 @@
-console.log(`🔗 ENDS WITH`);
+console.log(`🔗 ENDS WITH\n`);
 
 const tech = 'Node.js';
 
